@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Spin, Table, Card } from "antd";
-import axios from "axios";
-import _ from "lodash";
+import React, { useEffect, useState } from "react"
+import { Spin, Table, Card } from "antd"
+import axios from "axios"
+import _ from "lodash"
 
-import { RecentStocks } from "./RecentStocks";
-import { Number } from "./widgets";
+import { RecentStocks } from "./RecentStocks"
+import { Number } from "./widgets"
 const getDeptsByPage = (pageNumber) =>
   axios.get("https://datacenter-web.eastmoney.com/api/data/v1/get", {
+    headers: {
+      referer: "https://data.eastmoney.com/",
+      host: "huaxiang.eastmoney.com",
+    },
     params: {
       sortColumns:
         "TOTAL_BUYER_SALESTIMES_1DAY,TOTAL_BUYER_SALESTIMES_2DAY,TOTAL_BUYER_SALESTIMES_3DAY,TOTAL_BUYER_SALESTIMES_5DAY,TOTAL_BUYER_SALESTIMES_10DAY",
@@ -19,24 +23,24 @@ const getDeptsByPage = (pageNumber) =>
       client: "WEB",
       filter: '(STATISTICSCYCLE="01")', // 01代表近一个月上过榜， 02表示近三个月， 03近六个月，04近一年
     },
-  });
+  })
 
 const getAllDepts = async () => {
-  let depts = [];
-  const data = await getDeptsByPage(1);
-  const result = _.get(data, "data.result");
+  let depts = []
+  const data = await getDeptsByPage(1)
+  const result = _.get(data, "data.result")
   if (result) {
-    depts = _.concat(depts, result.data);
+    depts = _.concat(depts, result.data)
     if (result.pages > 1) {
       const restData = await Promise.all(
         _.map(new Array(result.pages - 1).fill(null), (v, index) => {
-          return getDeptsByPage(index + 2);
+          return getDeptsByPage(index + 2)
         })
-      );
+      )
       depts = _.concat(
         depts,
         ..._.map(restData, (d) => _.get(d, "data.result.data"))
-      );
+      )
     }
   }
   depts = _.map(depts, (dept) => ({
@@ -71,19 +75,19 @@ const getAllDepts = async () => {
         dept.TOTAL_BUYER_SALESTIMES_10DAY,
       1
     ),
-  }));
-  return _.unionBy(depts, "OPERATEDEPT_CODE");
-};
+  }))
+  return _.unionBy(depts, "OPERATEDEPT_CODE")
+}
 
 export const Depts = () => {
-  const [depts, setDepts] = useState([]);
+  const [depts, setDepts] = useState([])
   useEffect(() => {
     const getDepts = async () => {
-      setDepts(await getAllDepts());
-    };
-    getDepts();
-  }, []);
-  console.log(depts);
+      setDepts(await getAllDepts())
+    }
+    getDepts()
+  }, [])
+  console.log(depts)
   return (
     <Table
       bordered
@@ -97,7 +101,7 @@ export const Depts = () => {
             <Card size="small" title="近期上榜股票">
               <RecentStocks deptCode={record.OPERATEDEPT_CODE} />
             </Card>
-          );
+          )
         },
       }}
       columns={[
@@ -107,7 +111,7 @@ export const Depts = () => {
           render: (n, { OPERATEDEPT_CODE }) => (
             <a
               target="_blank"
-              href={`https://data.eastmoney.com/stock/lhb/yyb/{OPERATEDEPT_CODE}.html`}
+              href={`https://data.eastmoney.com/stock/lhb/yyb/${OPERATEDEPT_CODE}.html`}
             >
               {n}
             </a>
@@ -274,5 +278,5 @@ export const Depts = () => {
         // },
       ]}
     />
-  );
-};
+  )
+}

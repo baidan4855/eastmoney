@@ -10,6 +10,10 @@ const getRecentStocks = async (deptCode) => {
   const data = await axios.get(
     "https://datacenter-web.eastmoney.com/api/data/v1/get",
     {
+      headers: {
+        referer: "https://data.eastmoney.com/",
+        host: "huaxiang.eastmoney.com",
+      },
       params: {
         sortColumns: "TRADE_DATE,NET_AMT",
         sortTypes: "-1,-1",
