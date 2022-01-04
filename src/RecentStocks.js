@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Spin, Table, Card, Popover, Tabs } from "antd";
-import { LineChartOutlined } from "@ant-design/icons";
-import axios from "axios";
-import _ from "lodash";
+import React, { useEffect, useState } from "react"
+import { Spin, Table, Card, Popover, Tabs } from "antd"
+import { LineChartOutlined } from "@ant-design/icons"
+import axios from "axios"
+import _ from "lodash"
 
-import { Number } from "./widgets";
+import { Number } from "./widgets"
 
 const getRecentStocks = async (deptCode) => {
   const data = await axios.get(
@@ -22,21 +22,21 @@ const getRecentStocks = async (deptCode) => {
         filter: '(OPERATEDEPT_CODE="' + deptCode + '")', // 01代表近一个月上过榜， 02表示近三个月， 03近六个月，04近一年
       },
     }
-  );
-  return _.get(data, "data.result.data");
-};
+  )
+  return _.get(data, "data.result.data")
+}
 export const RecentStocks = ({ deptCode }) => {
-  const [stocks, setStocks] = useState([]);
+  const [stocks, setStocks] = useState([])
   useEffect(() => {
     const getStocks = async () => {
-      if (!deptCode) return;
-      let data = await getRecentStocks(deptCode);
-      data = _.groupBy(data, (d) => d.TRADE_DATE.split(" ")[0]);
-      setStocks(data);
-    };
+      if (!deptCode) return
+      let data = await getRecentStocks(deptCode)``
+      data = _.groupBy(data, (d) => d.TRADE_DATE.split(" ")[0])
+      setStocks(data)
+    }
 
-    getStocks();
-  }, []);
+    getStocks()
+  }, [])
   return (
     <Tabs
       size="small"
@@ -45,7 +45,7 @@ export const RecentStocks = ({ deptCode }) => {
       style={{ width: "calc(100vw - 60px)" }}
     >
       {_.map(stocks, (value, key) => {
-        console.log(key);
+        console.log(key)
         return (
           <Tabs.TabPane tab={key} key={key}>
             <Table
@@ -81,7 +81,7 @@ export const RecentStocks = ({ deptCode }) => {
                   title: "代码",
                   dataIndex: "SECURITY_CODE",
                   render: (code) => {
-                    const pre = _.startsWith(code, "6") ? 1 : 0;
+                    const pre = _.startsWith(code, "6") ? 1 : 0
                     return (
                       <div>
                         <Popover
@@ -96,7 +96,7 @@ export const RecentStocks = ({ deptCode }) => {
                           <span>{code}</span> <LineChartOutlined />
                         </Popover>
                       </div>
-                    );
+                    )
                   },
                 },
                 // {
@@ -108,20 +108,25 @@ export const RecentStocks = ({ deptCode }) => {
                   title: "买入额(万)",
                   dataIndex: "ACT_BUY",
                   render: (v) => (
-                    <Number value={v ? _.ceil(v / 1000, 2) : 0} color="red" />
+                    <Number value={v ? _.ceil(v / 10000, 2) : 0} color="red" />
                   ),
                 },
                 {
                   title: "卖出额(万)",
                   dataIndex: "ACT_SELL",
                   render: (v) => (
-                    <Number value={v ? _.ceil(v / 1000, 2) : 0} color="green" />
+                    <Number
+                      value={v ? _.ceil(v / 10000, 2) : 0}
+                      color="green"
+                    />
                   ),
                 },
                 {
                   title: "净额(万)",
                   dataIndex: "NET_AMT",
-                  render: (v) => <Number value={v ? _.ceil(v / 1000, 2) : 0} />,
+                  render: (v) => (
+                    <Number value={v ? _.ceil(v / 10000, 2) : 0} />
+                  ),
                 },
                 {
                   title: "上榜原因",
@@ -154,8 +159,8 @@ export const RecentStocks = ({ deptCode }) => {
               ]}
             />
           </Tabs.TabPane>
-        );
+        )
       })}
     </Tabs>
-  );
-};
+  )
+}
