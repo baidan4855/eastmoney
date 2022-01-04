@@ -30,7 +30,7 @@ export const RecentStocks = ({ deptCode }) => {
   useEffect(() => {
     const getStocks = async () => {
       if (!deptCode) return
-      let data = await getRecentStocks(deptCode)``
+      let data = await getRecentStocks(deptCode)
       data = _.groupBy(data, (d) => d.TRADE_DATE.split(" ")[0])
       setStocks(data)
     }
